@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 case class PostRequest(name: String, age: Int)
 
 object PostRequest {
+  // TODO: ここでバリデーションが必要か検討する
   // バリデーションを実施する。フロントでバリデーションは必須。不正な操作で送られた場合、ここで弾く程度のものと認識しておく。
   implicit val reads: Reads[PostRequest] = (
     (__ \ "name").read[String].filter(JsonValidationError("必須入力です"))(x => !x.isEmpty) and
@@ -18,9 +19,13 @@ object PostRequest {
     ) (PostRequest.apply _)
 }
 
+// TODO: QueryService考える
+// TODO: Messageの実装を軽くやる
+
 @Singleton
 class UserController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
 
+  // TODO: ページングどうするか検討する
   def index(): Action[AnyContent] = Action.async { implicit request =>
     userService.readAll map { users =>
       Ok(Json.toJson(users))
