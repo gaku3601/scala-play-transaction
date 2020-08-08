@@ -5,7 +5,7 @@ import scalikejdbc._
 import utils.fujitask.scalikejdbc._
 import utils.fujitask.{ReadTransaction, ReadWriteTransaction, Task}
 
-class UserRepositoryImpl {
+class UserRepository {
 
   def create(name: String): Task[ReadWriteTransaction, User] =
     ask.map { implicit session =>

@@ -1,13 +1,13 @@
 package domain.service
 
 import domain.entity.User
-import infrastructure.repository.UserRepositoryImpl
+import infrastructure.repository.UserRepository
 import javax.inject.Inject
 import utils.fujitask.scalikejdbc._
 
 import scala.concurrent.Future
 
-class UserService @Inject()(userRepository: UserRepositoryImpl) {
+class UserService @Inject()(userRepository: UserRepository) {
   def create(name: String): Future[User] =
     userRepository.create(name).run()
 
