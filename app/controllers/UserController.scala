@@ -19,7 +19,7 @@ object PostRequest {
 }
 
 @Singleton
-class HomeController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
+class UserController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     userService.readAll map { users =>
@@ -27,7 +27,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, u
     }
   }
 
-  def post: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def create: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[PostRequest].fold(
       error => {
         Future.successful(BadRequest(JsError.toJson(error)))
