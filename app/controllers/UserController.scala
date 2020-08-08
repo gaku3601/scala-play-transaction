@@ -34,7 +34,7 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
       },
       postRequest => {
         userService.create(postRequest.name, postRequest.age) map { user =>
-          Ok(Json.obj("status" -> "OK"))
+          Ok(Json.obj("status" -> "OK", "data" -> user))
         }
       }
     )
