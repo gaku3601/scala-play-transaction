@@ -6,6 +6,8 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
 
+import scala.concurrent.{ExecutionContext, Future}
+
 // TODO: これをどこに配置するか
 case class PostRequest(body: String, data: String)
 
@@ -18,20 +20,21 @@ object PostRequest {
 }
 
 @Singleton
-class HomeController @Inject()(val controllerComponents: ControllerComponents, userService: UserService) extends BaseController {
+class HomeController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
 
   def index(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
   }
 
-  def post: Action[JsValue] = Action(parse.json) { implicit request =>
+  def post: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[PostRequest].fold(
       error => {
-        BadRequest(JsError.toJson(error))
+        Future.successful(BadRequest(JsError.toJson(error)))
       },
       postRequest => {
-        userService.create("Randy")
-        Ok(Json.toJson("ok"))
+        userService.create("Randy") map { user =>
+          Ok(Json.obj("status" -> "OK"))
+        }
       }
     )
   }
