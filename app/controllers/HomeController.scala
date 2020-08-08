@@ -21,8 +21,10 @@ object PostRequest {
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
 
-  def index(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+  def index(): Action[AnyContent] = Action.async { implicit request =>
+    userService.readAll map { users =>
+      Ok(Json.toJson(users))
+    }
   }
 
   def post: Action[JsValue] = Action.async(parse.json) { implicit request =>
