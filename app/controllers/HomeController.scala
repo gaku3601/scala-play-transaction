@@ -1,10 +1,12 @@
 package controllers
 
+import domain.service.UserService
 import javax.inject.{Inject, Singleton}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
 
+// TODO: これをどこに配置するか
 case class PostRequest(body: String, data: String)
 
 object PostRequest {
@@ -16,7 +18,7 @@ object PostRequest {
 }
 
 @Singleton
-class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class HomeController @Inject()(val controllerComponents: ControllerComponents, userService: UserService) extends BaseController {
 
   def index(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     Ok(views.html.index())
@@ -28,6 +30,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         BadRequest(JsError.toJson(error))
       },
       postRequest => {
+        userService.create("Randy")
         Ok(Json.toJson("ok"))
       }
     )
