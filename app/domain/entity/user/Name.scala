@@ -7,6 +7,7 @@ case class Name(value: String) {
   require(value.length <= 60, "名前は60文字以下で入力してください")
 }
 
+// TODO:　ここらへんはプレゼンテーションにおけないか検討
 object Name {
   implicit lazy val jsonWrites: Writes[Name] = (n: Name) => Json.toJson(n.value)
 }
