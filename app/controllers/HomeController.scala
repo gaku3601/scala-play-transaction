@@ -8,14 +8,13 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO: これをどこに配置するか
-case class PostRequest(body: String, data: String)
+case class PostRequest(name: String, age: Int)
 
 object PostRequest {
   // バリデーションを実施する。フロントでバリデーションは必須。不正な操作で送られた場合、ここで弾く程度のものと認識しておく。
   implicit val reads: Reads[PostRequest] = (
-    (__ \ "post").read[String].filter(JsonValidationError("必須入力です"))(x => !x.isEmpty) and
-      (__ \ "test" \ "data").read[String].filter(JsonValidationError("必須入力です"))(x => !x.isEmpty)
+    (__ \ "name").read[String].filter(JsonValidationError("必須入力です"))(x => !x.isEmpty) and
+      (__ \ "age").read[Int]
     ) (PostRequest.apply _)
 }
 
@@ -32,7 +31,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents, u
         Future.successful(BadRequest(JsError.toJson(error)))
       },
       postRequest => {
-        userService.create("Randy") map { user =>
+        userService.create(postRequest.name, postRequest.age) map { user =>
           Ok(Json.obj("status" -> "OK"))
         }
       }

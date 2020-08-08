@@ -1,3 +1,3 @@
 package domain.entity
 
-case class User(id: Long, name: String)
+case class User(id: Long, name: String, age: Int)
