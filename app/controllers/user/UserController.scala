@@ -33,8 +33,8 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
         Future.successful(BadRequest(JsError.toJson(error)))
       },
       createRequest => {
-        userService.create(createRequest.name, createRequest.age) map { user =>
-          Ok(Json.obj("status" -> "OK", "data" -> user))
+        userService.create(createRequest.name, createRequest.age) map { response =>
+          Ok(Json.obj("status" -> "OK", "data" -> Json.obj("user1" -> response._1, "user2" -> response._2)))
         }
       }
     )

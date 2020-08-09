@@ -8,8 +8,11 @@ import utils.fujitask.scalikejdbc._
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserService @Inject()(userRepository: UserRepository)(implicit ec: ExecutionContext) {
-  def create(name: String, age: Int): Future[User] =
-    userRepository.create(User(Name(name), Age(age))).run()
+  def create(name: String, age: Int): Future[(User, User)] =
+    (for {
+      user1 <- userRepository.create(User(Name(name), Age(age))) // あまりないと思うがデータを2つ返したい時とかこんな感じ
+      user2 <- userRepository.create(User(Name(name), Age(age)))
+    } yield (user1, user2)).run()
 
   def read(id: Long): Future[Option[User]] =
     userRepository.read(id).run()

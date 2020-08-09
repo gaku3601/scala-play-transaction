@@ -8,6 +8,7 @@ import scala.concurrent._
 
 @Singleton
 class ErrorHandler extends HttpErrorHandler {
+  // TODO: clientErrorについて調査する
   def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     Future.successful(
       Status(statusCode)("A client error occurred: " + message)
