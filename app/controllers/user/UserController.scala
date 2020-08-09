@@ -2,6 +2,7 @@ package controllers.user
 
 import controllers.user.UserRequest._
 import controllers.user.UserResponse._
+import domain.entity.user.User
 import domain.service.UserService
 import infrastructure.queryservice.UserQueryService
 import javax.inject.{Inject, Singleton}
@@ -34,6 +35,19 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
       createRequest => {
         userService.create(createRequest.name, createRequest.age) map { user =>
           Ok(Json.obj("status" -> "OK", "data" -> user))
+        }
+      }
+    )
+  }
+
+  def update: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[UpdateRequest].fold(
+      error => {
+        Future.successful(BadRequest(JsError.toJson(error)))
+      },
+      updateRequest => {
+        userService.update(User(updateRequest.id, updateRequest.name, updateRequest.age)) map { _ =>
+          Ok(Json.obj("status" -> "OK", "data" -> Json.obj()))
         }
       }
     )

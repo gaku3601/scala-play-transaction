@@ -29,7 +29,7 @@ class UserRepository {
 
   def update(user: User): Task[ReadWriteTransaction, Unit] =
     ask.map { implicit session =>
-      val sql = sql"""update users set name = ${user.name}, age = ${user.age} where id = ${user.id}"""
+      val sql = sql"""update users set name = ${user.name.value}, age = ${user.age.value} where id = ${user.id}"""
       sql.update.apply()
     }
 

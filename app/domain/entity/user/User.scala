@@ -8,4 +8,7 @@ object User {
 
   def apply(name: String, age: Int): User =
     User(0, Name(name), Age(age))
+
+  def apply(id: Long, name: String, age: Int): User =
+    User(id, Name(name), Age(age))
 }

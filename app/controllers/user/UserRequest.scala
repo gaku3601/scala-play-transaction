@@ -14,5 +14,15 @@ object UserRequest {
       ) (CreateRequest.apply _)
   }
 
+  case class UpdateRequest(id: Int, name: String, age: Int)
+
+  object UpdateRequest {
+    implicit val reads: Reads[UpdateRequest] = (
+      (JsPath \ "id").read[Int] and
+        (JsPath \ "name").read[String] and
+        (JsPath \ "age").read[Int]
+      ) (UpdateRequest.apply _)
+  }
+
 }
 
