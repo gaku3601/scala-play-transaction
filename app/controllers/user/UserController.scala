@@ -20,6 +20,12 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
     }
   }
 
+  def show(id: Int): Action[AnyContent] = Action.async { implicit request =>
+    userService.read(id) map { user =>
+      Ok(Json.toJson(user))
+    }
+  }
+
   def create: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[CreateRequest].fold(
       error => {

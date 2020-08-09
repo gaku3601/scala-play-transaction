@@ -5,6 +5,7 @@
 
 # An example controller showing a sample home page
 GET         /                    controllers.user.UserController.index(page: Int ?= 1)
+GET         /:id                 controllers.user.UserController.show(id: Int)
 POST        /                    controllers.user.UserController.create
 
 # Map static resources from the /public folder to the /assets URL path
