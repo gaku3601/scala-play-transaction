@@ -5,7 +5,7 @@
 
 # An example controller showing a sample home page
 GET          /                    controllers.user.UserController.index(page: Int ?= 1)
-GET          /:id                 controllers.user.UserController.show(id: Int)
+GET          /:id                 controllers.user.UserController.show(id: Long)
 POST         /                    controllers.user.UserController.create
 PATCH        /                    controllers.user.UserController.update
 

@@ -3,26 +3,24 @@ package controllers.user
 import controllers.user.UserRequest._
 import controllers.user.UserResponse._
 import domain.entity.user.User
-import domain.service.UserService
-import infrastructure.queryservice.UserQueryService
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
-import utils.fujitask.scalikejdbc.readRunner
+import usecase.user.UserUsecase
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserController @Inject()(val controllerComponents: ControllerComponents, userService: UserService, userQueryService: UserQueryService)(implicit ec: ExecutionContext) extends BaseController {
+class UserController @Inject()(val controllerComponents: ControllerComponents, userUsecase: UserUsecase)(implicit ec: ExecutionContext) extends BaseController {
 
   def index(page: Int): Action[AnyContent] = Action.async { implicit request =>
-    userQueryService.readAll(page).run() map { users =>
+    userUsecase.readAll(page) map { users =>
       Ok(Json.toJson(users))
     }
   }
 
-  def show(id: Int): Action[AnyContent] = Action.async { implicit request =>
-    userService.read(id) map { user =>
+  def show(id: Long): Action[AnyContent] = Action.async { implicit request =>
+    userUsecase.read(id) map { user =>
       Ok(Json.toJson(user))
     }
   }
@@ -33,8 +31,8 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
         Future.successful(BadRequest(JsError.toJson(error)))
       },
       createRequest => {
-        userService.create(createRequest.name, createRequest.age) map { response =>
-          Ok(Json.obj("status" -> "OK", "data" -> Json.obj("user1" -> response._1, "user2" -> response._2)))
+        userUsecase.create(createRequest.name, createRequest.age) map { user =>
+          Ok(Json.obj("status" -> "OK", "data" -> Json.obj("user" -> user)))
         }
       }
     )
@@ -46,7 +44,7 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
         Future.successful(BadRequest(JsError.toJson(error)))
       },
       updateRequest => {
-        userService.update(User(updateRequest.id, updateRequest.name, updateRequest.age)) map { _ =>
+        userUsecase.update(User(updateRequest.id, updateRequest.name, updateRequest.age)) map { _ =>
           Ok(Json.obj("status" -> "OK", "data" -> Json.obj()))
         }
       }
