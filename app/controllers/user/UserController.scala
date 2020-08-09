@@ -1,23 +1,13 @@
-package controllers
+package controllers.user
 
+import controllers.user.UserRequest._
+import controllers.user.UserResponse._
 import domain.service.UserService
 import javax.inject.{Inject, Singleton}
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
 
 import scala.concurrent.{ExecutionContext, Future}
-
-case class PostRequest(name: String, age: Int)
-
-object PostRequest {
-  // TODO: ここでバリデーションが必要か検討する
-  // バリデーションを実施する。フロントでバリデーションは必須。不正な操作で送られた場合、ここで弾く程度のものと認識しておく。
-  implicit val reads: Reads[PostRequest] = (
-    (__ \ "name").read[String].filter(JsonValidationError("必須入力です"))(x => !x.isEmpty) and
-      (__ \ "age").read[Int]
-    ) (PostRequest.apply _)
-}
 
 // TODO: QueryService考える
 // TODO: Messageの実装を軽くやる
@@ -33,12 +23,12 @@ class UserController @Inject()(val controllerComponents: ControllerComponents, u
   }
 
   def create: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[PostRequest].fold(
+    request.body.validate[CreateRequest].fold(
       error => {
         Future.successful(BadRequest(JsError.toJson(error)))
       },
-      postRequest => {
-        userService.create(postRequest.name, postRequest.age) map { user =>
+      createRequest => {
+        userService.create(createRequest.name, createRequest.age) map { user =>
           Ok(Json.obj("status" -> "OK", "data" -> user))
         }
       }

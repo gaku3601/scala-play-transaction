@@ -8,6 +8,7 @@ import utils.fujitask.{ReadTransaction, ReadWriteTransaction, Task}
 class UserRepository {
 
   def create(user: User): Task[ReadWriteTransaction, User] =
+  // TODO: valueなんとかできないか。
     ask.map { implicit session =>
       val sql = sql"""insert into users (name, age) values (${user.name.value}, ${user.age.value})"""
       val id = sql.updateAndReturnGeneratedKey.apply()
