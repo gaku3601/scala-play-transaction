@@ -8,6 +8,7 @@ import utils.fujitask.scalikejdbc._
 import scala.concurrent.Future
 
 class UserService @Inject()(userRepository: UserRepository) {
+  // TODO: トランザクションの貼り方を記載する
   def create(name: String, age: Int): Future[User] =
     userRepository.create(User(Name(name), Age(age))).run()
 
