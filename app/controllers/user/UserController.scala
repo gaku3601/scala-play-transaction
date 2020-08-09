@@ -3,21 +3,19 @@ package controllers.user
 import controllers.user.UserRequest._
 import controllers.user.UserResponse._
 import domain.service.UserService
+import infrastructure.queryservice.UserQueryService
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents, _}
+import utils.fujitask.scalikejdbc.readRunner
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO: QueryService考える
-// TODO: Messageの実装を軽くやる
-
 @Singleton
-class UserController @Inject()(val controllerComponents: ControllerComponents, userService: UserService)(implicit ec: ExecutionContext) extends BaseController {
+class UserController @Inject()(val controllerComponents: ControllerComponents, userService: UserService, userQueryService: UserQueryService)(implicit ec: ExecutionContext) extends BaseController {
 
-  // TODO: ページングどうするか検討する
-  def index(): Action[AnyContent] = Action.async { implicit request =>
-    userService.readAll map { users =>
+  def index(page: Int): Action[AnyContent] = Action.async { implicit request =>
+    userQueryService.readAll(page).run() map { users =>
       Ok(Json.toJson(users))
     }
   }
